@@ -27,7 +27,7 @@ document.addEventListener("DOMCONTENTLOADER", function () {
 
 })
 
-let providerURL = "https://polygon-amoy.g.alchemy.com/v2/XmqLtljL9SGmyGSEHK95H322L6dPhbsS"
+let providerURL = 
 let provider;
 let privatekey
 let address
@@ -82,7 +82,7 @@ function getSelectedNetwork(e) {
     element.innerHTML = e.target.innerHTML;
 
     if (e.target.innerHTML === "Ethereum Mainnet ") {
-        providerURL = "https://eth-mainnet.g.alchemy.com/v2/XmqLtljL9SGmyGSEHK95H322L6dPhbsS"
+        providerURL = "
         document.getElementById("network").style.display = "none";
     }
     else if (e.target.innerHTML === "Polygon Mainnet") {
@@ -90,15 +90,15 @@ function getSelectedNetwork(e) {
         document.getElementById("network").style.display = "none";
     }
     else if (e.target.innerHTML === "Polygon Amoy") {
-        providerURL ="https://rpc.ankr.com/polygon_amoy";
+        providerURL =
         document.getElementById("network").style.display = "none";
     }
     else if (e.target.innerHTML === "Sepolia testnet ") {
-        providerURL ="https://rpc.ankr.com/eth_sepolia";
+        providerURL ="";
         document.getElementById("network").style.display = "none";
     }
     else if (e.target.innerHTML === "holesky testnet ") {
-        providerURL ="https://rpc.ankr.com/eth_holesky";
+        providerURL ="";
         document.getElementById("network").style.display = "none";
     }
 
