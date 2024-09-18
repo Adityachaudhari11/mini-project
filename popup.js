@@ -15,35 +15,37 @@ document.addEventListener("DOMCONTENTLOADER", function () {
     document.getElementById("open_Transfer").addEventListener("click", openTransfer);
     document.getElementById("goBack").addEventListener("click", goback);
     document.getElementById("open_Import").addEventListener("click", openImport);
+    document.getElementById("goBack_import").addEventListener("click", importGoBack);
+
     document.getElementById("open_assets").addEventListener("click",openAssets);
-    document.getElementById("open_Activity").addEventListener("click",openActivity);
+    document.getElementById("open_activity").addEventListener("click",openActivity);
 
     document.getElementById("goHomePage").addEventListener("click",goHomePage);
     document.getElementById("openAccountImport").addEventListener("click",openImportModel);
-    document.getElementById("close_Import_Account").addEventListener("click",closeImporModel);
+    document.getElementById("close_import_Account").addEventListener("click",closeImportModel);
     document.getElementById("add_new_token").addEventListener("click",addToken);
     document.getElementById("add_New_Account").addEventListener("click",addAccount);
     
 
 })
-
-let providerURL = 
-let provider;
-let privatekey
-let address
+//state variable
+let providerURL = "https://polygon-amoy.g.alchemy.com/v2/XmqLtljL9SGmyGSEHK95H322L6dPhbsS"
+//let provider;
+let privateKey;
+let address;
 
 // functions for data and their storage
 function handler() {
     document.getElementById("transfer_center").style.display="flex";
     const amount=document.getElementById("amount").value;
     const address=document.getElementById("amount").value;
-    const private_key="";
-    const testaccount="";
+    //const private_key="";
+    //const testaccount="";
     //provider building
-    const provider = new ethers.providers.JsonRcpProvider(providerURL);
+    const provider = new ethers.providers.JsonRpcProvider(providerURL);
 
 
-    let wallet = new ethers.Wallet(privatekey,provider);
+    let wallet = new ethers.Wallet(privateKey,provider);
 
     const tx={
         to: address,
@@ -60,18 +62,20 @@ function handler() {
 
     document.getElementById("transfer_center").style.display="none";
     const a =document.getElementById("link");
+    //new
+    a.href =`https://mumbai.polygonscan.com/tx/${txobj.hash}`;
     document.getElementById("link").style.display="block";
     });
  };
-function checkBalance() {
-    const provider = new ethers.providers.JsonRcpProvider(providerURL);
+function checkBalance(address) {
+    const provider = new ethers.providers.JsonRpcProvider(providerURL);
     
     provider.getBalance(address).then((balance)=> {
         const balanceInEth = ether.utils.formatEther(balance);
 
-        document.getElementById("accountBalance").innerHTML = '${balanceInEth} MATIC';
+        document.getElementById("accountBalance").innerHTML = `${balanceInEth} MATIC`;
 
-        document.getElementById("userAddress").innerHTML = '${address.slice(0,15)}...';
+        document.getElementById("userAddress").innerHTML = `${address.slice(0,15)}...`;
     })
  };
 function getOpenNetwork() {
@@ -82,7 +86,7 @@ function getSelectedNetwork(e) {
     element.innerHTML = e.target.innerHTML;
 
     if (e.target.innerHTML === "Ethereum Mainnet ") {
-        providerURL = "
+        providerURL = "https://eth-mainnet.g.alchemy.com/v2/XmqLtljL9SGmyGSEHK95H322L6dPhbsS"
         document.getElementById("network").style.display = "none";
     }
     else if (e.target.innerHTML === "Polygon Mainnet") {
@@ -90,15 +94,15 @@ function getSelectedNetwork(e) {
         document.getElementById("network").style.display = "none";
     }
     else if (e.target.innerHTML === "Polygon Amoy") {
-        providerURL =
+        providerURL ="https://rpc.ankr.com/polygon_amoy";
         document.getElementById("network").style.display = "none";
     }
     else if (e.target.innerHTML === "Sepolia testnet ") {
-        providerURL ="";
+        providerURL ="https://rpc.ankr.com/eth_sepolia";
         document.getElementById("network").style.display = "none";
     }
     else if (e.target.innerHTML === "holesky testnet ") {
-        providerURL ="";
+        providerURL ="https://rpc.ankr.com/eth_holesky";
         document.getElementById("network").style.display = "none";
     }
 
@@ -145,19 +149,19 @@ function signUp() {
             password:password,
             passwordConfirm:passwordConfirm,
             address:wallet.address,
-            private_key:wallet.privatekey,
+            private_key:wallet.privateKey,
             mnemonic:wallet.mnemonic.phrase,
         };
 
         fetch(url, {
             method:"post",
-            handlers:{
+            headers:{
                 "Content-Type":"application/json",
             },
             body: JSON.stringify(data),
         }).then((response) => response.json()).then((result) => {
             document.getElementById("createdAddress").innerHTML = wallet.address;
-            document.getElementById("createdPrivateKey").innerHTML = wallet.privatekey;
+            document.getElementById("createdPrivateKey").innerHTML = wallet.privateKey;
             document.getElementById("createdMnemonic").innerHTML = wallet.mnemonic.phrase;
             document.getElementById("center").style.display = wallet.address;
             document.getElementById("createAddress").innerHTML = "none";
@@ -166,7 +170,7 @@ function signUp() {
 
             const userwallet = {
                 address:wallet.address,
-                private_key:wallet.privatekey,
+                private_key:wallet.privateKey,
                 mnemonic:wallet.mnemonic.phrase,
             };
 
@@ -192,12 +196,12 @@ function login() {
     const url ="http://localhost:3000/api/v1/user/login";
     const data = {
         email:email,
-        password:password
+        password:password,
     };
 
     fetch(url,{
         method:'POST',
-        handlers:{
+        headers:{
             "Content-Type":"application/json",
         },
         body: JSON.stringify(data)
@@ -222,11 +226,11 @@ function logout() {
     window.location.reload();
  };
 function openTransfer() { 
-    document.getElementById("transfer_from").style.display = "block";
+    document.getElementById("transfer_form").style.display = "block";
     document.getElementById("home").style.display = "none";
 };
 function goback() { 
-    document.getElementById("transfer_from").style.display = "none";
+    document.getElementById("transfer_form").style.display = "none";
     document.getElementById("home").style.display = "block";
 };
 
@@ -257,17 +261,17 @@ function openImportModel() {
     document.getElementById("imort_account").style.display = "block";
     document.getElementById("home").style.display = "none";
  };
- function closeImport(){
+ function closeImportModel(){
     document.getElementById("import_account").style.display="none";
     document.getElementById("home").style.display="block";
     };
     function addToken(){
-     const address=document.getElementById("token address").value;
+     const address=document.getElementById("token_address").value;
      const name=document.getElementById("token_name").value;
      const symbol=document.getElementById("token_symbol").value;
     
      //api call
-       const url='';
+       const url="http://localhost:3000/api/v1/tokens/createtoken";
        const data={
         name:name,
         address:address,
@@ -276,7 +280,7 @@ function openImportModel() {
     
        fetch(url, {
         method: "post",
-        handlers: {
+        headers: {
             "content_type":"application/JSON",
     
         },
@@ -291,22 +295,22 @@ function openImportModel() {
         console.log("ERROR",error); 
        });
     };
-    function addAccoount(){
-        const privatekey=document.getElementById("add_account_private_key").value;
-        const provider=new ethers.providers.JsonRcpProvider(providerURL);
+    function addAccount(){
+        const privateKey=document.getElementById("add_account_private_key").value;
+        const provider=new ethers.providers.JsonRpcProvider(providerURL);
     
-        let wallet=new ethers.Wallet(privatekey,provider);
+        let wallet=new ethers.Wallet(privateKey,provider);
          console.log(wallet);
     
-    const url="";
+    const url="http://localhost:3000/api/v1/account/createaccount";
     
     const data={
-        privatekey:privatekey,
+        privatekey:privateKey,
         adrress:wallet.address,
     };
     fetch(url, {
         method: "post",
-        handlers: {
+        headers: {
             "content_type":"application/JSON",
     
         },
@@ -323,28 +327,28 @@ function openImportModel() {
     }
     function myFunction(){
         const str=localStorage.getItem("userWallet");
-        const parseObj=JSON.parse(str);
+        const parsedObj=JSON.parse(str);
     
     
-        if(parseObj.address){
-            document.getElementById("loginuser").style.dsiplay="none";
+        if(parsedObj?.address){
+            document.getElementById("loginUser").style.display="none";
             document.getElementById("home").style.display="block";
     
-    privatekey=parseObj.private_key;
-    address=parseObj.adddress;
+    privateKey=parsedObj.private_key;
+    address=parsedObj.adddress;
     
-    checkbalance(parseObj.address);
+    checkBalance(parsedObj.address);
       }
           const tokenRender=document.querySelector("assets");
           const accountRender=document.querySelector(".accountlist");
-          const url="http://localhost:3000/api/v1/tokens"
+          const url="http://localhost:3000/api/v1/tokens/alltoken"
           fetch(url).then((response)=>response.json()).then((data)=>{
             let elements="";
     data.data.token.map((token)=>
     (elements += `
-        <div class="assets_item>
+        <div class="assets_item">
         <img class="assets_item_png"
-        src="./assets/theblockchaincoders.png"
+        src="./assets/logo.png"
         alt=""
         />
         
@@ -367,7 +371,8 @@ function openImportModel() {
             account += `
                <div class="list">
                <p> ${i+1}</p>
-               <p class ="accountsValue" data-address=${accounts.address} data-privatekey=${account.privatekey}>
+               <p class ="accountsValue" data-address=${accounts.address} data-privatekey=${account.
+                privateKey}>
                ${account.adddress.sclice(0,25)}...</p>
         
                </div>`
@@ -377,7 +382,7 @@ function openImportModel() {
           }).catch((error)=>{
             console.log(error);
           });
-          console.log(privatekey);
+          console.log(privateKey);
     
     };
     function copyAddress(){
