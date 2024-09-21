@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMCONTENTLOADER", function () {
     // Target the elements
     document.querySelector(".accountList").addEventListener("click", changeAccount);
     document.getElementById("userAddress").addEventListener("click", copyAddress);
@@ -6,6 +6,7 @@ document.addEventListener("DOMContentLoaded", function () {
     document.getElementById("header_network").addEventListener("click", getOpenNetwork);
     document.getElementById("network_item").addEventListener("click", getSelectedNetwork);
     document.getElementById("add_network").addEventListener("click", setNetwork);
+    
     document.getElementById("loginAccount").addEventListener("click", loginUser);
     document.getElementById("accountCreate").addEventListener("click", createUser);
     document.getElementById("openCreate").addEventListener("click", openCreate);
@@ -16,17 +17,21 @@ document.addEventListener("DOMContentLoaded", function () {
     document.getElementById("goBack").addEventListener("click", goback);
     document.getElementById("open_Import").addEventListener("click", openImport);
     document.getElementById("goBack_import").addEventListener("click", importGoBack);
-    document.getElementById("open_assets").addEventListener("click", openAssets);
-    document.getElementById("open_activity").addEventListener("click", openActivity);
-    document.getElementById("goHomePage").addEventListener("click", goHomePage);
-    document.getElementById("openAccountImport").addEventListener("click", openImportModel);
-    document.getElementById("close_import_account").addEventListener("click", closeImportModel);
-    document.getElementById("add_new_token").addEventListener("click", addToken);
-    document.getElementById("add_New_Account").addEventListener("click", addAccount);
-});
 
-// State variables
-let providerURL = "https://polygon-amoy.g.alchemy.com/v2/XmqLtljL9SGmyGSEHK95H322L6dPhbsS";
+    document.getElementById("open_assets").addEventListener("click",openAssets);
+    document.getElementById("open_activity").addEventListener("click",openActivity);
+
+    document.getElementById("goHomePage").addEventListener("click",goHomePage);
+    document.getElementById("openAccountImport").addEventListener("click",openImportModel);
+    document.getElementById("close_import_account").addEventListener("click",closeImportModel);
+    document.getElementById("add_new_token").addEventListener("click",addToken);
+    document.getElementById("add_New_Account").addEventListener("click",addAccount);
+    
+
+})
+//state variable
+let providerURL = "https://polygon-amoy.g.alchemy.com/v2/XmqLtljL9SGmyGSEHK95H322L6dPhbsS"
+//let provider;
 let privateKey;
 let address;
 
@@ -288,7 +293,7 @@ function addAccount() {
     
     console.log(wallet);
 
-    const url = "http://localhost:3000/api/v1/account/createaccount";
+    const url = "http://localhost:3005/api/v1/account/createaccount";
     const data = {
         privatekey: privateKeyInput,
         address: wallet.address,
@@ -315,7 +320,7 @@ function myFunction() {
     const parsedObj = JSON.parse(str);
 
     if (parsedObj?.address) {
-        document.getElementById("loginUser").style.display = "none";
+        document.getElementById("loginAccount").style.display = "none";
         document.getElementById("home").style.display = "block";
 
         privateKey = parsedObj.private_key;
