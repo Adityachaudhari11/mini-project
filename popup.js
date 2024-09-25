@@ -1,4 +1,4 @@
-document.addEventListener("DOMCONTENTLOADER", function () {
+document.addEventListener("DOMContentLoaded", function () {
     // Target the elements
     document.querySelector(".accountList").addEventListener("click", changeAccount);
     document.getElementById("userAddress").addEventListener("click", copyAddress);
@@ -11,7 +11,9 @@ document.addEventListener("DOMCONTENTLOADER", function () {
     document.getElementById("accountCreate").addEventListener("click", createUser);
     document.getElementById("openCreate").addEventListener("click", openCreate);
     document.getElementById("sign_up").addEventListener("click", signUp);
+
     document.getElementById("login_up").addEventListener("click", login);
+    
     document.getElementById("logout").addEventListener("click", logout);
     document.getElementById("open_Transfer").addEventListener("click", openTransfer);
     document.getElementById("goBack").addEventListener("click", goback);
@@ -30,7 +32,7 @@ document.addEventListener("DOMCONTENTLOADER", function () {
 
 })
 //state variable
-let providerURL = "https://polygon-amoy.g.alchemy.com/v2/XmqLtljL9SGmyGSEHK95H322L6dPhbsS"
+let providerURL = "";
 //let provider;
 let privateKey;
 let address;
@@ -39,22 +41,25 @@ let address;
 function handler() {
     document.getElementById("transfer_center").style.display = "flex";
     const amount = document.getElementById("amount").value;
-    const toAddress = document.getElementById("toAddress").value; // Correct ID for the recipient address
+    const address = document.getElementById("address").value; // Correct ID for the recipient address
 
     const provider = new ethers.providers.JsonRpcProvider(providerURL);
     let wallet = new ethers.Wallet(privateKey, provider);
 
     const tx = {
-        to: toAddress,
+        to: address,
         value: ethers.utils.parseEther(amount),
     };
 
-    let linkElement = document.getElementById("link");
+    let a = document.getElementById("link");
     wallet.sendTransaction(tx).then((txobj) => {
         console.log("txHash:", txobj.hash);
         document.getElementById("transfer_center").style.display = "none";
-        linkElement.href = `https://mumbai.polygonscan.com/tx/${txobj.hash}`;
-        linkElement.style.display = "block";
+        const a = document.getElementById("link");
+
+        document.getElementById("link").style.display ="block";
+        a.href = `https://mumbai.polygonscan.com/tx/${txobj.hash}`;
+        a.style.display = "block";
     }).catch((error) => {
         console.error("Transaction error:", error);
     });
@@ -79,22 +84,31 @@ function getOpenNetwork() {
 function getSelectedNetwork(e) {
     const element = document.getElementById("selected_network");
     element.innerHTML = e.target.innerHTML;
-
+    // we are using switch
     switch (e.target.innerHTML) {
         case "Ethereum Mainnet":
-            providerURL = "https://eth-mainnet.g.alchemy.com/v2/XmqLtljL9SGmyGSEHK95H322L6dPhbsS";
+            providerURL = "";
+            document.getElementById("network").style.display = "none";
             break;
         case "Polygon Mainnet":
-            providerURL = "https://rpc.ankr.com/polygon";
+            providerURL = "";
+            document.getElementById("network").style.display = "none";
+
             break;
         case "Polygon Amoy":
-            providerURL = "https://rpc.ankr.com/polygon_amoy";
+            providerURL = "";
+            document.getElementById("network").style.display = "none";
+
             break;
         case "Sepolia testnet":
-            providerURL = "https://rpc.ankr.com/eth_sepolia";
+            providerURL = "";
+            document.getElementById("network").style.display = "none";
+
             break;
         case "Holesky testnet":
             providerURL = "https://rpc.ankr.com/eth_holesky";
+            document.getElementById("network").style.display = "none";
+
             break;
     }
     document.getElementById("network").style.display = "none";
@@ -121,7 +135,6 @@ function openCreate() {
 }
 
 function signUp() {
-    console.log("Signup btn triggered");
     const name = document.getElementById("sign_up_name").value;
     const email = document.getElementById("sign_up_email").value;
     const password = document.getElementById("sign_up_password").value;
@@ -156,16 +169,19 @@ function signUp() {
             document.getElementById("createdAddress").innerHTML = wallet.address;
             document.getElementById("createdPrivateKey").innerHTML = wallet.privateKey;
             document.getElementById("createdMnemonic").innerHTML = wallet.mnemonic.phrase;
-            document.getElementById("center").style.display = "block";
+            document.getElementById("center").style.display = "none";
             document.getElementById("accountData").style.display = "block";
+            document.getElementById("sign_up").style.display = "none";
 
-            const userwallet = {
+
+            const userWallet = {
                 address: wallet.address,
                 private_key: wallet.privateKey,
                 mnemonic: wallet.mnemonic.phrase,
             };
 
-            localStorage.setItem("userWallet", JSON.stringify(userwallet));
+            const jsonObj = JSON.stringify(userWallet);
+            localStorage.setItem("userWallet", jsonObj)
             document.getElementById("goHomePage").style.display = "block";
             window.location.reload();
         }).catch((error) => {
@@ -176,15 +192,16 @@ function signUp() {
 
 function login() {
     document.getElementById("login_form").style.display = "none";
-    document.getElementById("login_form").style.display = "block";
+    document.getElementById("center").style.display = "block";
 
     const email = document.getElementById("login_email").value;
     const password = document.getElementById("login_password").value;
 
+    // API CALL
     const url = "http://localhost:3005/api/v1/user/login";
     const data = {
-        email: email,
-        password: password,
+        email:email,
+        password:password,
     };
 
     fetch(url, {
@@ -193,17 +210,19 @@ function login() {
             "Content-Type": "application/json",
         },
         body: JSON.stringify(data)
-    }).then((response) => response.json()).then((result) => {
-        console.log(result);
+    }).then((response)=> response.json()).then((result) => {
+        console.log(result)
         const userWallet = {
             address: result.data.user.address,
             private_key: result.data.user.private_key,
             mnemonic: result.data.user.mnemonic,
         };
 
-        localStorage.setItem("userWallet", JSON.stringify(userWallet));
+        const jsonObj = JSON.stringify(userWallet);
+        localStorage.setItem("userWallet",jsonObj);
         window.location.reload();
-    }).catch((error) => {
+    }
+).catch((error)=> {
         console.log(error);
     });
 }
@@ -259,14 +278,14 @@ function closeImportModel() {
 }
 
 function addToken() {
-    const tokenAddress = document.getElementById("token_address").value;
+    const address = document.getElementById("token_address").value;
     const name = document.getElementById("token_name").value;
     const symbol = document.getElementById("token_symbol").value;
 
-    const url = "http://localhost:3000/api/v1/tokens/createtoken";
+    const url = "http://localhost:3005/api/v1/tokens/createtoken";
     const data = {
         name: name,
-        address: tokenAddress,
+        address: address,
         symbol: symbol,
     };
 
@@ -287,15 +306,16 @@ function addToken() {
 }
 
 function addAccount() {
-    const privateKeyInput = document.getElementById("add_account_private_key").value;
+    const privateKey = document.getElementById("add_account_private_key").value;
     const provider = new ethers.providers.JsonRpcProvider(providerURL);
-    let wallet = new ethers.Wallet(privateKeyInput, provider);
+    let wallet = new ethers.Wallet(privateKey, provider);
     
     console.log(wallet);
 
+    // API CALL
     const url = "http://localhost:3005/api/v1/account/createaccount";
     const data = {
-        privatekey: privateKeyInput,
+        privateKey: privateKey,
         address: wallet.address,
     };
 
@@ -320,7 +340,7 @@ function myFunction() {
     const parsedObj = JSON.parse(str);
 
     if (parsedObj?.address) {
-        document.getElementById("loginAccount").style.display = "none";
+        document.getElementById("LoginUser").style.display = "none";
         document.getElementById("home").style.display = "block";
 
         privateKey = parsedObj.private_key;
@@ -329,39 +349,43 @@ function myFunction() {
         checkBalance(parsedObj.address);
     }
 
-    const tokenRender = document.querySelector("#assets");
+    const tokenRender = document.querySelector(".assets");
     const accountRender = document.querySelector(".accountList");
 
     const url = "http://localhost:3005/api/v1/tokens/alltoken";
     
     fetch(url).then((response) => response.json()).then((data) => {
         let elements = "";
-        data.data.tokens.map((token) => {
+        data.data.tokens.map((token) => (
             elements += `
                 <div class="assets_item">
-                    <img class="assets_item_png" src="./assets/logo.png" alt=""/>
+                    <img class="assets_item_img" src="./assets/logo.png" alt=""/>
                     <span>${token.address.slice(0, 15)}...</span>
                     <span>${token.symbol}</span>
-                </div>`;
-        });
+                </div>`
+            )
+        );
         tokenRender.innerHTML = elements;
     }).catch((error) => {
         console.log(error);
-    });
+          });
+          
 
-    fetch("http://localhost:3005/api/v1/account/allaccount").then((response) => response.json()).then((data) => {
+    fetch("http://localhost:3005/api/v1/account/allaccount")
+    .then((response) => response.json())
+    .then((data) => {
         let accounts = "";
-        data.data.accounts.map((account, i) => {
+        data.data.accounts.map((account, i) => (
             accounts += `
-                <div class="list">
+                <div class="lists">
                     <p>${i + 1}</p>
-                    <p class="accountsValue" data-address="${account.address}" data-privatekey="${account.privateKey}">
+                    <p class="accountValue" data-address="${account.address}" data-privatekey="${account.privateKey}">
                         ${account.address.slice(0, 25)}...
                     </p>
-                </div>`;
-        accountRender.innerHTML += accounts;
-        });
-    }).catch((error) => {
+                </div>`)
+        );
+        accountRender.innerHTML = accounts;
+        }).catch((error) => {
         console.log(error);
     });
 
@@ -377,19 +401,19 @@ function copyAddress() {
 }
 
 function changeAccount() {
-    const data = document.querySelector(".accountsValue");
-    const newAddress = data.getAttribute("data-address");
-    const newPrivateKey = data.getAttribute("data-privatekey");
+    const data = document.querySelector(".accountValue");
+    const address = data.getAttribute("data-address");
+    const privateKey = data.getAttribute("data-privatekey");
 
-    console.log(newPrivateKey, newAddress);
+    console.log(privateKey, address);
 
     const userWallet = {
-        address: newAddress,
-        private_key: newPrivateKey,
-        mnemonic: "changed"
+        address: address,
+        private_key: privateKey,
+        mnemonic: "Changed"
     };
-
-    localStorage.setItem("userWallet", JSON.stringify(userWallet));
+    const jsonObj = JSON.stringify(userWallet);
+    localStorage.setItem("userWallet",jsonObj);
     window.location.reload();
 }
 
